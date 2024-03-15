@@ -222,7 +222,17 @@ public final class RuntimeModRemapper {
 
                 info.outputConsumerPath = outputConsumer;
 
-                remapper.apply(outputConsumer, info.tag);
+                try {
+                    remapper.apply(outputConsumer, info.tag);
+                } catch (RuntimeException e) {
+                    if (!e.getMessage().equals("Unfixable conflicts")) {
+                        throw e;
+                    }
+                    throw new IllegalStateException(
+                        "A mod was found that conflicts with Mojmap! " +
+                            "Please upload a copy of your log to https://github.com/Gaming32/fabric-mojmap/issues."
+                    );
+                }
             }
 
             //Done in a 3rd loop as this can happen when the remapper is doing its thing.
