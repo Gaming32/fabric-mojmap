@@ -9,6 +9,16 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net")
+    exclusiveContent {
+        forRepository {
+            maven("https://api.modrinth.com/maven") {
+                name = "Modrinth"
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 dependencies {
@@ -30,6 +40,7 @@ dependencies {
     implementation("net.fabricmc:tiny-remapper:0.10.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.lenni0451:Reflect:1.3.2")
+    implementation("maven.modrinth:mod-loading-screen:1.0.4:api")
 }
 
 tasks.compileJava {
@@ -55,6 +66,7 @@ tasks.shadowJar {
     relocate("net.fabricmc.tinyremapper", "$libs.tinyremapper")
     relocate("com.google.gson", "$libs.gson")
     relocate("net.lenni0451.reflect", "$libs.reflect")
+    relocate("io.github.gaming32.modloadingscreen.api", "$libs.mlsapi")
 }
 
 tasks.build.get().dependsOn(tasks.shadowJar)

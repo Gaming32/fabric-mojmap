@@ -17,6 +17,8 @@
 package net.fabricmc.loader.impl.discovery;
 
 import io.github.gaming32.fabricmojmap.rt.UtilRt;
+import io.github.gaming32.modloadingscreen.api.CustomProgressBar;
+import io.github.gaming32.modloadingscreen.api.LoadingScreenApi;
 import net.fabricmc.accesswidener.AccessWidener;
 import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
 import net.fabricmc.accesswidener.AccessWidenerReader;
@@ -67,14 +69,43 @@ public final class RuntimeModRemapper {
     private static final String SOURCE_NAMESPACE = "intermediary";
 
     public static void remap(Collection<ModCandidate> modCandidates, Path tmpDir, Path outputDir) {
+        try (
+            CustomProgressBar mainBar = LoadingScreenApi.getCustomProgressBar("fabric-mojmap-main", "Fabric Mojmap: Remapping (0/7)", 7);
+            CustomProgressBar subBar = LoadingScreenApi.getCustomProgressBar("fabric-mojmap-sub", "", modCandidates.size())
+        ) {
+            remapMain(modCandidates, tmpDir, outputDir, mainBar, subBar);
+        }
+    }
+
+    private static void beginPhase(CustomProgressBar mainBar, CustomProgressBar subBar) {
+        subBar.setProgress(0);
+        mainBar.step();
+        mainBar.setTitle("Fabric Mojmap: Remapping (" + mainBar.getProgress() + "/7)");
+        if (mainBar.getProgress() > mainBar.getMaximum()) {
+            throw new IllegalStateException("Main progress phase exceeds maximum");
+        }
+    }
+
+    private static void progressUpdate(CustomProgressBar subBar, ModCandidate mod, String phase) {
+        subBar.step();
+        subBar.setTitle(phase + " (" + subBar.getProgress() + "/" + subBar.getMaximum() + "): " + mod.getMetadata().getName());
+    }
+
+    public static void remapMain(
+        Collection<ModCandidate> modCandidates, Path tmpDir, Path outputDir,
+        CustomProgressBar mainBar, CustomProgressBar subBar
+    ) {
         List<ModCandidate> modsToRemap = new ArrayList<>();
         Set<InputTag> remapMixins = new HashSet<>();
 
+        beginPhase(mainBar, subBar);
         for (ModCandidate mod : modCandidates) {
+            progressUpdate(subBar, mod, "Collect");
             if (mod.getRequiresRemap()) {
                 modsToRemap.add(mod);
             }
         }
+        subBar.setMaximum(modsToRemap.size());
 
         if (modsToRemap.isEmpty()) return;
 
@@ -102,8 +133,11 @@ public final class RuntimeModRemapper {
             AccessWidener mergedAccessWidener = new AccessWidener();
             mergedAccessWidener.visitHeader(SOURCE_NAMESPACE);
 
+            beginPhase(mainBar, subBar);
             for (ModCandidate mod : modsToRemap) {
+                progressUpdate(subBar, mod, "Prepare");
                 RemapInfo info = new RemapInfo();
+                info.mod = mod;
                 infoMap.put(mod, info);
 
                 if (mod.hasPath()) {
@@ -153,7 +187,9 @@ public final class RuntimeModRemapper {
                 throw new RuntimeException("Failed to populate remap classpath", e);
             }
 
+            beginPhase(mainBar, subBar);
             for (ModCandidate mod : modsToRemap) {
+                progressUpdate(subBar, mod, "Read");
                 RemapInfo info = infoMap.get(mod);
 
                 InputTag tag = remapper.createInputTag();
@@ -167,7 +203,9 @@ public final class RuntimeModRemapper {
             }
 
             //Done in a 2nd loop as we need to make sure all the inputs are present before remapping
+            beginPhase(mainBar, subBar);
             for (ModCandidate mod : modsToRemap) {
+                progressUpdate(subBar, mod, "Assets");
                 RemapInfo info = infoMap.get(mod);
                 OutputConsumerPath outputConsumer = new OutputConsumerPath.Builder(info.outputPath).build();
 
@@ -186,7 +224,9 @@ public final class RuntimeModRemapper {
             }
 
             //Done in a 3rd loop as this can happen when the remapper is doing its thing.
+            beginPhase(mainBar, subBar);
             for (ModCandidate mod : modsToRemap) {
+                progressUpdate(subBar, mod, "Access widener");
                 RemapInfo info = infoMap.get(mod);
 
                 if (info.sourceAccessWidener != null) {
@@ -196,7 +236,9 @@ public final class RuntimeModRemapper {
 
             remapper.finish();
 
+            beginPhase(mainBar, subBar);
             for (ModCandidate mod : modsToRemap) {
+                progressUpdate(subBar, mod, "Finish");
                 RemapInfo info = infoMap.get(mod);
 
                 info.outputConsumerPath.close();
@@ -231,7 +273,9 @@ public final class RuntimeModRemapper {
 
             throw new FormattedException("Failed to remap mods!", t);
         } finally {
+            beginPhase(mainBar, subBar);
             for (RemapInfo info : infoMap.values()) {
+                progressUpdate(subBar, info.mod, "Cleanup");
                 if (info.fileSystemDelegate != null) {
                     try {
                         info.fileSystemDelegate.close();
@@ -286,6 +330,7 @@ public final class RuntimeModRemapper {
     }
 
     private static class RemapInfo {
+        ModCandidate mod;
         InputTag tag;
         Path inputPath;
         Path outputPath;
