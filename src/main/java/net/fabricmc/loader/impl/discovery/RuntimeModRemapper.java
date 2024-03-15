@@ -16,7 +16,7 @@
 
 package net.fabricmc.loader.impl.discovery;
 
-import io.github.gaming32.fabricmojmap.rt.UtilRt;
+import io.github.gaming32.fabricmojmap.rt.RuntimeRemapperRt;
 import io.github.gaming32.modloadingscreen.api.CustomProgressBar;
 import io.github.gaming32.modloadingscreen.api.LoadingScreenApi;
 import net.fabricmc.accesswidener.AccessWidener;
@@ -170,7 +170,7 @@ public final class RuntimeModRemapper {
             }
 
             remapper = TinyRemapper.newRemapper()
-                .withMappings(UtilRt.adaptMappingProvider(
+                .withMappings(RuntimeRemapperRt.adaptMappingProvider(
                     TinyRemapperMappingsHelper.create(launcher.getMappingConfiguration().getMappings(), SOURCE_NAMESPACE, launcher.getTargetNamespace())
                 ))
                 .renameInvalidLocals(false)
