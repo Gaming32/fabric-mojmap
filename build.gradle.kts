@@ -12,14 +12,23 @@ repositories {
 }
 
 dependencies {
+    // Loader
     compileOnly("net.fabricmc:fabric-loader:0.15.7")
+
+    // ASM (available with Loader)
+    compileOnly("org.ow2.asm:asm:9.6")
+    compileOnly("org.ow2.asm:asm-analysis:9.6")
     compileOnly("org.ow2.asm:asm-commons:9.6")
+    compileOnly("org.ow2.asm:asm-tree:9.6")
+    compileOnly("org.ow2.asm:asm-util:9.6")
 
     compileOnly("org.jetbrains:annotations:24.1.0")
 
+    // Our deps
+    implementation("net.fabricmc:access-widener:2.1.0")
     implementation("net.fabricmc:mapping-io:0.5.1")
+    implementation("net.fabricmc:tiny-remapper:0.10.1")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.ow2.asm:asm-tree:9.6")
     implementation("net.lenni0451:Reflect:1.3.2")
 }
 
@@ -32,12 +41,19 @@ tasks.shadowJar {
         attributes["Premain-Class"] = "io.github.gaming32.fabricmojmap.FabricMojmap"
     }
 
-    rename("RuntimeModRemapper(\\$?.*?)\\.class", "RuntimeModRemapper$1.class.bin")
+    dependencies {
+        exclude(dependency("org.ow2.asm:.*"))
+    }
+
+    filesMatching("net/fabricmc/loader/**") {
+        path = path.replace("net/fabricmc/loader/", "io/github/gaming32/fabricmojmap/embedded/net/fabricmc/loader/")
+    }
 
     val libs = "io.github.gaming32.fabricmojmap.libs"
+    relocate("net.fabricmc.accesswidener", "$libs.accesswidener")
     relocate("net.fabricmc.mappingio", "$libs.mappingio")
+    relocate("net.fabricmc.tinyremapper", "$libs.tinyremapper")
     relocate("com.google.gson", "$libs.gson")
-    relocate("org.objectweb.asm", "$libs.asm")
     relocate("net.lenni0451.reflect", "$libs.reflect")
 }
 

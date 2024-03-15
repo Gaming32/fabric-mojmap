@@ -24,7 +24,7 @@ public class FabricReplacement implements ClassFileTransformer {
             return null;
         }
         FabricMojmap.info("Replacing " + className);
-        try (InputStream is = FabricMojmap.class.getClassLoader().getResourceAsStream(className + ".class.bin")) {
+        try (InputStream is = FabricMojmap.class.getResourceAsStream("embedded/" + className + ".class")) {
             return Util.readAllBytes(is);
         } catch (Throwable t) {
             System.err.println("Failed to replace " + className);

@@ -16,26 +16,27 @@
 
 package net.fabricmc.loader.impl.discovery;
 
+import io.github.gaming32.fabricmojmap.rt.UtilRt;
+import net.fabricmc.accesswidener.AccessWidener;
+import net.fabricmc.accesswidener.AccessWidenerClassVisitor;
+import net.fabricmc.accesswidener.AccessWidenerReader;
+import net.fabricmc.accesswidener.AccessWidenerRemapper;
+import net.fabricmc.accesswidener.AccessWidenerWriter;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.fabricmc.loader.impl.FormattedException;
 import net.fabricmc.loader.impl.launch.FabricLauncher;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
-import net.fabricmc.loader.impl.lib.accesswidener.AccessWidener;
-import net.fabricmc.loader.impl.lib.accesswidener.AccessWidenerClassVisitor;
-import net.fabricmc.loader.impl.lib.accesswidener.AccessWidenerReader;
-import net.fabricmc.loader.impl.lib.accesswidener.AccessWidenerRemapper;
-import net.fabricmc.loader.impl.lib.accesswidener.AccessWidenerWriter;
-import net.fabricmc.loader.impl.lib.tinyremapper.InputTag;
-import net.fabricmc.loader.impl.lib.tinyremapper.NonClassCopyMode;
-import net.fabricmc.loader.impl.lib.tinyremapper.OutputConsumerPath;
-import net.fabricmc.loader.impl.lib.tinyremapper.TinyRemapper;
-import net.fabricmc.loader.impl.lib.tinyremapper.extension.mixin.MixinExtension;
 import net.fabricmc.loader.impl.util.FileSystemUtil;
 import net.fabricmc.loader.impl.util.ManifestUtil;
 import net.fabricmc.loader.impl.util.SystemProperties;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.fabricmc.loader.impl.util.mappings.TinyRemapperMappingsHelper;
+import net.fabricmc.tinyremapper.InputTag;
+import net.fabricmc.tinyremapper.NonClassCopyMode;
+import net.fabricmc.tinyremapper.OutputConsumerPath;
+import net.fabricmc.tinyremapper.TinyRemapper;
+import net.fabricmc.tinyremapper.extension.mixin.MixinExtension;
 import org.objectweb.asm.commons.Remapper;
 
 import java.io.File;
@@ -135,8 +136,11 @@ public final class RuntimeModRemapper {
             }
 
             remapper = TinyRemapper.newRemapper()
-                .withMappings(TinyRemapperMappingsHelper.create(launcher.getMappingConfiguration().getMappings(), SOURCE_NAMESPACE, launcher.getTargetNamespace()))
+                .withMappings(UtilRt.adaptMappingProvider(
+                    TinyRemapperMappingsHelper.create(launcher.getMappingConfiguration().getMappings(), SOURCE_NAMESPACE, launcher.getTargetNamespace())
+                ))
                 .renameInvalidLocals(false)
+                .ignoreConflicts(true)
                 .extension(new MixinExtension(remapMixins::contains))
                 .extraAnalyzeVisitor((mrjVersion, className, next) ->
                     AccessWidenerClassVisitor.createClassVisitor(FabricLoaderImpl.ASM_VERSION, next, mergedAccessWidener)
