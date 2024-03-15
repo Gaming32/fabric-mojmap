@@ -17,10 +17,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 public class MappingsSetup {
+    public static final String COMPLETE_MARKER = "fabric-mojmap-mappings-completion-marker";
+
     public static void prepareMappings(String version, Path mappingsJar) throws IOException {
         FabricMojmap.info("Preparing mappings...");
         final URL versionUrl = MappingsUtils.getVersionJsonUrl(version);
@@ -37,7 +40,9 @@ public class MappingsSetup {
         try (JarOutputStream output = new JarOutputStream(Files.newOutputStream(mappingsJar), manifest)) {
             output.putNextEntry(new JarEntry("mappings/mappings.tiny"));
             try (Reader intermediaryInput = Util.newReader(FabricMojmap.class.getResourceAsStream("/mappings/mappings.tiny"))) {
-                final MappingWriter writer = new Tiny2FileWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8), false);
+                final MappingWriter writer = new Tiny2FileWriter(
+                    new OutputStreamWriter(Util.closeGuard(output), StandardCharsets.UTF_8), false
+                );
                 final MappingNsCompleter completer = new MappingNsCompleter(writer, Util.mapOf(
                     Util.mapEntry("intermediary", "official"),
                     Util.mapEntry("named", "intermediary")
@@ -111,7 +116,24 @@ public class MappingsSetup {
                     }
                 });
             }
+            output.closeEntry();
+            output.putNextEntry(new JarEntry(COMPLETE_MARKER));
+            output.closeEntry();
         }
         FabricMojmap.info("Prepared mappings");
+    }
+
+    public static boolean mappingsComplete(Path path) {
+        try (JarInputStream jis = new JarInputStream(Files.newInputStream(path))) {
+            while (true) {
+                final JarEntry entry = jis.getNextJarEntry();
+                if (entry == null) break;
+                if (entry.getName().equals(COMPLETE_MARKER)) {
+                    return true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 }

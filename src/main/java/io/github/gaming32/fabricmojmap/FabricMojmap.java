@@ -17,7 +17,7 @@ public class FabricMojmap {
         final String minecraftVersion = getMinecraftVersion();
         final Path mappingsJar = CACHE_DIR.resolve("mappings-" + minecraftVersion + ".jar");
         info("Using mappings jar " + mappingsJar);
-        if (!Files.isRegularFile(mappingsJar)) {
+        if (!MappingsSetup.mappingsComplete(mappingsJar)) {
             try {
                 MappingsSetup.prepareMappings(minecraftVersion, mappingsJar);
             } catch (Throwable t) {

@@ -2,9 +2,11 @@ package io.github.gaming32.fabricmojmap;
 
 import com.google.gson.stream.JsonReader;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -111,5 +113,13 @@ public class Util {
             read += n;
         }
         return read;
+    }
+
+    public static OutputStream closeGuard(OutputStream output) {
+        return new FilterOutputStream(output) {
+            @Override
+            public void close() {
+            }
+        };
     }
 }
