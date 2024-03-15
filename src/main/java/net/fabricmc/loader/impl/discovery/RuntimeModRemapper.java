@@ -34,6 +34,7 @@ import net.fabricmc.loader.impl.util.SystemProperties;
 import net.fabricmc.loader.impl.util.log.Log;
 import net.fabricmc.loader.impl.util.log.LogCategory;
 import net.fabricmc.loader.impl.util.mappings.TinyRemapperMappingsHelper;
+import net.fabricmc.loom.kotlin.remapping.KotlinMetadataTinyRemapperExtensionImpl;
 import net.fabricmc.tinyremapper.InputTag;
 import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
@@ -175,6 +176,7 @@ public final class RuntimeModRemapper {
                 ))
                 .renameInvalidLocals(false)
                 .ignoreConflicts(true)
+                .extension(KotlinMetadataTinyRemapperExtensionImpl.INSTANCE)
                 .extension(new MixinExtension(remapMixins::contains))
                 .extraAnalyzeVisitor((mrjVersion, className, next) ->
                     AccessWidenerClassVisitor.createClassVisitor(FabricLoaderImpl.ASM_VERSION, next, mergedAccessWidener)
