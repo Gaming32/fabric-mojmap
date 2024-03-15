@@ -33,7 +33,6 @@ public class MappingsSetup {
         final Manifest manifest = new Manifest();
         manifest.getMainAttributes().putValue("Manifest-Version", "1.0");
         manifest.getMainAttributes().putValue("Game-Id", "minecraft");
-        manifest.getMainAttributes().putValue("Game-Version", version);
 
         try (JarOutputStream output = new JarOutputStream(Files.newOutputStream(mappingsJar), manifest)) {
             output.putNextEntry(new JarEntry("mappings/mappings.tiny"));
