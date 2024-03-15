@@ -32,8 +32,6 @@ public class FabricMojmap {
         ClassLoaders.loadToFront(mappingsJar.toUri().toURL());
         inst.addTransformer(new FabricReplacement());
         inst.addTransformer(new FabricInstrumentation());
-//        Files.write(CLASSPATH_FILE, System.getProperty("java.class.path").getBytes(StandardCharsets.UTF_8));
-//        System.setProperty(SystemProperties.REMAP_CLASSPATH_FILE, CLASSPATH_FILE.toString()); // Inlined, so reference is safe
     }
 
     public static String getMinecraftVersion() throws IOException {
