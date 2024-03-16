@@ -28,12 +28,15 @@ dependencies {
     // Loader
     compileOnly("net.fabricmc:fabric-loader:0.15.7")
 
-    // ASM (available with Loader)
+    // ASM, available with Loader
     compileOnly("org.ow2.asm:asm:9.6")
     compileOnly("org.ow2.asm:asm-analysis:9.6")
     compileOnly("org.ow2.asm:asm-commons:9.6")
     compileOnly("org.ow2.asm:asm-tree:9.6")
     compileOnly("org.ow2.asm:asm-util:9.6")
+
+    // Mixin, also available with Loader
+    compileOnly("net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5")
 
     compileOnly("org.jetbrains:annotations:24.1.0")
 
