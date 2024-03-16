@@ -40,6 +40,7 @@ public class FabricMojmap {
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricLoaderImplTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricMixinBootstrapTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.GameProviderHelperTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.MemberInfoTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.MinecraftGameProviderTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.TargetNamespaceTransformer");
         transformerManager.hookInstrumentation(inst);
