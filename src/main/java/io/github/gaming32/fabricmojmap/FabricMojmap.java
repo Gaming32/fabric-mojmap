@@ -1,6 +1,8 @@
 package io.github.gaming32.fabricmojmap;
 
 import com.google.gson.stream.JsonReader;
+import net.lenni0451.classtransform.TransformerManager;
+import net.lenni0451.classtransform.utils.tree.BasicClassProvider;
 import net.lenni0451.reflect.ClassLoaders;
 
 import java.io.IOException;
@@ -14,6 +16,7 @@ public class FabricMojmap {
 
     public static void premain(String agentArgs, Instrumentation inst) throws Exception {
         Files.createDirectories(CACHE_DIR);
+
         final String minecraftVersion = getMinecraftVersion();
         final Path mappingsJar = CACHE_DIR.resolve("mappings-" + minecraftVersion + ".jar");
         info("Using mappings jar " + mappingsJar);
@@ -30,8 +33,16 @@ public class FabricMojmap {
             }
         }
         ClassLoaders.loadToFront(mappingsJar.toUri().toURL());
+
         inst.addTransformer(new FabricReplacement());
-        inst.addTransformer(new FabricInstrumentation());
+
+        final TransformerManager transformerManager = new TransformerManager(new BasicClassProvider());
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricLoaderImplTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricMixinBootstrapTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.GameProviderHelperTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.MinecraftGameProviderTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.TargetNamespaceTransformer");
+        transformerManager.hookInstrumentation(inst);
     }
 
     public static String getMinecraftVersion() throws IOException {

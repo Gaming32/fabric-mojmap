@@ -41,12 +41,13 @@ dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     // Our deps
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("maven.modrinth:mod-loading-screen:1.0.4:api")
     implementation("net.fabricmc:access-widener:2.1.0")
     implementation("net.fabricmc:mapping-io:0.5.1")
     implementation("net.fabricmc:tiny-remapper:0.10.1")
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.lenni0451:Reflect:1.3.2")
-    implementation("maven.modrinth:mod-loading-screen:1.0.4:api")
+    implementation("net.lenni0451.classtransform:core:1.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
 }
 
@@ -73,12 +74,13 @@ tasks.shadowJar {
     }
 
     val libs = "io.github.gaming32.fabricmojmap.libs"
+    relocate("com.google.gson.", "$libs.gson.")
+    relocate("io.github.gaming32.modloadingscreen.api.", "$libs.mlsapi.")
     relocate("net.fabricmc.accesswidener.", "$libs.accesswidener.")
     relocate("net.fabricmc.mappingio.", "$libs.mappingio.")
     relocate("net.fabricmc.tinyremapper.", "$libs.tinyremapper.")
-    relocate("com.google.gson.", "$libs.gson.")
     relocate("net.lenni0451.reflect.", "$libs.reflect.")
-    relocate("io.github.gaming32.modloadingscreen.api.", "$libs.mlsapi.")
+    relocate("net.lenni0451.classtransform.", "$libs.classtransform.")
 }
 
 tasks.build.get().dependsOn(tasks.shadowJar)
