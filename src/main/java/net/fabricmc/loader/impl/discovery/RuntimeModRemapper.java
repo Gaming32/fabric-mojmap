@@ -174,6 +174,7 @@ public final class RuntimeModRemapper {
                 .withMappings(RuntimeRemapperRt.adaptMappingProvider(
                     TinyRemapperMappingsHelper.create(launcher.getMappingConfiguration().getMappings(), SOURCE_NAMESPACE, launcher.getTargetNamespace())
                 ))
+                .withMappings(RuntimeRemapperRt.createCompatMappings())
                 .renameInvalidLocals(false)
                 .ignoreConflicts(true)
                 .extension(KotlinMetadataTinyRemapperExtensionImpl.INSTANCE)

@@ -1,0 +1,7 @@
+tiny	2	0	intermediary	named
+c	dev/sterner/guardvillagers/common/entity/GuardEntity	dev/sterner/guardvillagers/common/entity/GuardEntity
+	m	(Z)V	setChargingCrossbow	setChargingCrossbowGuardEntity
+c	net/id/incubus_core/be/IncubusBaseBE	net/id/incubus_core/be/IncubusBaseBE
+	m	(Lnet/minecraft/class_2487;)V	load	loadIncubusBaseBE
+c	io/github/fabricators_of_create/porting_lib/mixin/common/GrindstoneMenuMixin$GrindstoneMenuOutputSlotMixin	io/github/fabricators_of_create/porting_lib/mixin/common/GrindstoneMenuMixin$GrindstoneMenuOutputSlotMixin
+	f	Lnet/minecraft/class_3803;	menu	this$0

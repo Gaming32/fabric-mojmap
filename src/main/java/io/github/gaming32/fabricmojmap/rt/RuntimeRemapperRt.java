@@ -1,6 +1,11 @@
 package io.github.gaming32.fabricmojmap.rt;
 
 import net.fabricmc.tinyremapper.IMappingProvider;
+import net.fabricmc.tinyremapper.TinyUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class RuntimeRemapperRt {
     public static IMappingProvider adaptMappingProvider(net.fabricmc.loader.impl.lib.tinyremapper.IMappingProvider loader) {
@@ -20,5 +25,22 @@ public class RuntimeRemapperRt {
                 out.acceptField(new IMappingProvider.Member(field.owner, field.name, field.desc), dstName);
             }
         });
+    }
+
+    public static IMappingProvider createCompatMappings() {
+        return out -> {
+            //noinspection DataFlowIssue
+            try (
+                BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                        RuntimeRemapperRt.class.getResourceAsStream("/fabric-mojmap-compat.tiny")
+                    )
+                )
+            ) {
+                TinyUtils.createTinyMappingProvider(reader, "intermediary", "named").load(out);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 }
