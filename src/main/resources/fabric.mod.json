@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-mojmap",
+  "version": "${version}",
+  "name": "Fabric Runtime Mojmap",
+  "description": "Runs Fabric under runtime Mojmap",
+  "authors": ["Gaming32"],
+  "license": "MIT",
+  "environment": "*",
+  "mixins": ["fabric-mojmap.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "*"
+  }
+}

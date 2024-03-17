@@ -1,6 +1,9 @@
 package io.github.gaming32.fabricmojmap;
 
-import com.google.gson.stream.JsonReader;
+import io.github.gaming32.fabricmojmap.libs.gson.stream.JsonReader;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
@@ -16,9 +19,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class Util {
     public static Reader newReader(InputStream is) {
@@ -121,5 +126,24 @@ public class Util {
             public void close() {
             }
         };
+    }
+
+    public static <T extends AbstractInsnNode> void advancePast(
+        Iterator<AbstractInsnNode> iter, Class<T> type, Predicate<T> predicate
+    ) {
+        while (iter.hasNext()) {
+            final AbstractInsnNode insn = iter.next();
+            if (type.isInstance(insn) && predicate.test(type.cast(insn))) return;
+        }
+        throw new IllegalStateException("Could not find matching instruction");
+    }
+
+    // Lambdas aren't allowed in CASM, so this is a workaround
+    public static void advancePastField(Iterator<AbstractInsnNode> iter, String name) {
+        Util.advancePast(iter, FieldInsnNode.class, i -> i.name.equals(name));
+    }
+
+    public static void advancePastMethod(Iterator<AbstractInsnNode> iter, String name) {
+        Util.advancePast(iter, MethodInsnNode.class, i -> i.name.equals(name));
     }
 }

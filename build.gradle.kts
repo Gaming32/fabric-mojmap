@@ -37,11 +37,12 @@ dependencies {
 
     // Mixin, also available with Loader
     compileOnly("net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5")
+    compileOnly("io.github.llamalad7:mixinextras-fabric:0.3.5")
 
-    compileOnly("org.jetbrains:annotations:24.1.0")
+    // Available with the game. Pre-relocated for use outside the mod.
+    compileOnly("com.google.code.gson:gson:2.10.1")
 
     // Our deps
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation("maven.modrinth:mod-loading-screen:1.0.4:api")
     implementation("net.fabricmc:access-widener:2.1.0")
     implementation("net.fabricmc:mapping-io:0.5.1")
@@ -49,6 +50,11 @@ dependencies {
     implementation("net.lenni0451:Reflect:1.3.2")
     implementation("net.lenni0451.classtransform:core:1.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
+
+    // Pre-relocated dependencies
+    implementation(project(":pre-relocated"))
+
+    compileOnly("org.jetbrains:annotations:24.1.0")
 }
 
 tasks.compileJava {
@@ -59,6 +65,14 @@ tasks.compileKotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }
 
+tasks.processResources {
+    inputs.property("version", version)
+
+    filesMatching("fabric.mod.json") {
+        expand("version" to version)
+    }
+}
+
 tasks.shadowJar {
     manifest {
         attributes["Premain-Class"] = "io.github.gaming32.fabricmojmap.FabricMojmap"
@@ -67,6 +81,7 @@ tasks.shadowJar {
     dependencies {
         exclude(dependency("org.ow2.asm:.*"))
         exclude(dependency("org.jetbrains:annotations:.*"))
+        exclude(dependency("com.google.code.gson:gson:.*"))
     }
 
     filesMatching("net/fabricmc/loader/**") {
@@ -74,7 +89,6 @@ tasks.shadowJar {
     }
 
     val libs = "io.github.gaming32.fabricmojmap.libs"
-    relocate("com.google.gson.", "$libs.gson.")
     relocate("io.github.gaming32.modloadingscreen.api.", "$libs.mlsapi.")
     relocate("net.fabricmc.accesswidener.", "$libs.accesswidener.")
     relocate("net.fabricmc.mappingio.", "$libs.mappingio.")

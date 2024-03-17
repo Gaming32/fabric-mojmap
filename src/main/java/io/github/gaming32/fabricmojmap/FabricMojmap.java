@@ -1,6 +1,6 @@
 package io.github.gaming32.fabricmojmap;
 
-import com.google.gson.stream.JsonReader;
+import io.github.gaming32.fabricmojmap.libs.gson.stream.JsonReader;
 import net.lenni0451.classtransform.TransformerManager;
 import net.lenni0451.classtransform.utils.tree.BasicClassProvider;
 import net.lenni0451.reflect.ClassLoaders;
@@ -37,11 +37,13 @@ public class FabricMojmap {
         inst.addTransformer(new FabricReplacement());
 
         final TransformerManager transformerManager = new TransformerManager(new BasicClassProvider());
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.ClasspathModCandidateFinderTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricLoaderImplTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricMixinBootstrapTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.GameProviderHelperTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.MemberInfoTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.MinecraftGameProviderTransformer");
+        transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.ReflectiveTypeAdapterFactoryTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.TargetNamespaceTransformer");
         transformerManager.hookInstrumentation(inst);
     }
