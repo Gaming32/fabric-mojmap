@@ -39,10 +39,8 @@ dependencies {
     compileOnly("net.fabricmc:sponge-mixin:0.12.5+mixin.0.8.5")
     compileOnly("io.github.llamalad7:mixinextras-fabric:0.3.5")
 
-    // Available with the game. Pre-relocated for use outside the mod.
-    compileOnly("com.google.code.gson:gson:2.10.1")
-
     // Our deps
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("maven.modrinth:mod-loading-screen:1.0.4:api")
     implementation("net.fabricmc:access-widener:2.1.0")
     implementation("net.fabricmc:mapping-io:0.5.1")
@@ -50,9 +48,6 @@ dependencies {
     implementation("net.lenni0451:Reflect:1.3.2")
     implementation("net.lenni0451.classtransform:core:1.13.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0")
-
-    // Pre-relocated dependencies
-    implementation(project(":pre-relocated"))
 
     compileOnly("org.jetbrains:annotations:24.1.0")
 }
@@ -81,7 +76,6 @@ tasks.shadowJar {
     dependencies {
         exclude(dependency("org.ow2.asm:.*"))
         exclude(dependency("org.jetbrains:annotations:.*"))
-        exclude(dependency("com.google.code.gson:gson:.*"))
     }
 
     filesMatching("net/fabricmc/loader/**") {

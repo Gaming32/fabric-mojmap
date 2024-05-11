@@ -1,6 +1,6 @@
 package io.github.gaming32.fabricmojmap;
 
-import io.github.gaming32.fabricmojmap.libs.gson.stream.JsonReader;
+import com.google.gson.stream.JsonReader;
 import net.lenni0451.classtransform.TransformerManager;
 import net.lenni0451.classtransform.utils.tree.BasicClassProvider;
 import net.lenni0451.reflect.ClassLoaders;
@@ -15,6 +15,8 @@ public class FabricMojmap {
     public static final Path CACHE_DIR = Paths.get(".fabric/runtime-mojmap");
 
     public static void premain(String agentArgs, Instrumentation inst) throws Exception {
+        setupClassTransform(inst);
+
         Files.createDirectories(CACHE_DIR);
 
         final String minecraftVersion = getMinecraftVersion();
@@ -35,7 +37,9 @@ public class FabricMojmap {
         ClassLoaders.loadToFront(mappingsJar.toUri().toURL());
 
         inst.addTransformer(new FabricReplacement());
+    }
 
+    private static void setupClassTransform(Instrumentation inst) {
         final TransformerManager transformerManager = new TransformerManager(new BasicClassProvider());
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.ClasspathModCandidateFinderTransformer");
         transformerManager.addTransformer("io.github.gaming32.fabricmojmap.transform.FabricLoaderImplTransformer");

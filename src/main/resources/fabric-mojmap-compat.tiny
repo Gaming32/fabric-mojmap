@@ -5,3 +5,5 @@ c	net/id/incubus_core/be/IncubusBaseBE	net/id/incubus_core/be/IncubusBaseBE
 	m	(Lnet/minecraft/class_2487;)V	load	loadIncubusBaseBE
 c	io/github/fabricators_of_create/porting_lib/mixin/common/GrindstoneMenuMixin$GrindstoneMenuOutputSlotMixin	io/github/fabricators_of_create/porting_lib/mixin/common/GrindstoneMenuMixin$GrindstoneMenuOutputSlotMixin
 	f	Lnet/minecraft/class_3803;	menu	this$0
+c	fi/dy/masa/malilib/gui/GuiTextFieldGeneric	fi/dy/masa/malilib/gui/GuiTextFieldGeneric
+	m	(I)V	setCursorPosition	setCursorPositionGuiTextFieldGeneric

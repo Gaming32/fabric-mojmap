@@ -1,6 +1,6 @@
 package io.github.gaming32.fabricmojmap;
 
-import io.github.gaming32.fabricmojmap.libs.gson.stream.JsonReader;
+import com.google.gson.stream.JsonReader;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;

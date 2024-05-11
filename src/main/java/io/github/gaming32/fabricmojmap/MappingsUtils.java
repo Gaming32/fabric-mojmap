@@ -1,8 +1,8 @@
 package io.github.gaming32.fabricmojmap;
 
-import io.github.gaming32.fabricmojmap.libs.gson.JsonObject;
-import io.github.gaming32.fabricmojmap.libs.gson.internal.Streams;
-import io.github.gaming32.fabricmojmap.libs.gson.stream.JsonReader;
+import com.google.gson.JsonObject;
+import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import net.fabricmc.mappingio.MappingReader;
 import net.fabricmc.mappingio.tree.MappingTree;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
